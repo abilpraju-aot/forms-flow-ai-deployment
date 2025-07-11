@@ -1,0 +1,89 @@
+{
+  "version_patterns": {
+    "docker_tag": "{VERSION_WITH_V}",
+    "url_version": "@{VERSION}",
+    "npm_version": "{VERSION_NO_V}",
+    "full_version": "{VERSION}"
+  },
+  
+  "files": [
+    {
+      "name": "Docker Compose - Main Deployment",
+      "path": "docker-compose/docker-compose.yml",
+      "updates": [
+        {
+          "description": "Forms Flow Forms Docker image tag",
+          "find": "ff_docker_image_pattern",
+          "replace": "image: formsflow/forms-flow-forms:{{docker_tag}}",
+          "type": "regex"
+        },
+        {
+          "description": "Forms Flow Web Docker image tag",
+          "find": "ff_web_docker_image_pattern", 
+          "replace": "image: formsflow/forms-flow-web:{{docker_tag}}",
+          "type": "regex"
+        },
+        {
+          "description": "Forms Flow API Docker image tag",
+          "find": "ff_api_docker_image_pattern",
+          "replace": "image: formsflow/forms-flow-webapi:{{docker_tag}}",
+          "type": "regex"
+        },
+        {
+          "description": "Forms Flow BPM Docker image tag", 
+          "find": "ff_bpm_docker_image_pattern",
+          "replace": "image: formsflow/forms-flow-bpm:{{docker_tag}}",
+          "type": "regex"
+        }
+      ]
+    },
+    
+    {
+      "name": "Analytics Docker Compose",
+      "path": "docker-compose/analytics-docker-compose.yml",
+      "updates": [
+        {
+          "description": "Forms Flow Analytics Docker image tag",
+          "find": "ff_analytics_docker_image_pattern",
+          "replace": "image: formsflow/forms-flow-analytics:{{docker_tag}}",
+          "type": "regex"
+        }
+      ]
+    },
+    
+    {
+      "name": "Environment Sample Files - Main",
+      "path": "docker-compose/sample.env", 
+      "updates": [
+        {
+          "description": "Version references in environment variables",
+          "find": "ff_version_pattern",
+          "replace": "{{full_version}}",
+          "type": "regex"
+        }
+      ]
+    },
+    
+    {
+      "name": "README File",
+      "path": "README.md",
+      "updates": [
+        {
+          "description": "Version references in README",
+          "find": "ff_version_pattern",
+          "replace": "{{full_version}}",
+          "type": "regex"
+        }
+      ]
+    }
+  ],
+  
+  "regex_patterns": {
+    "ff_docker_image_pattern": "image:\\s*formsflow/forms-flow-forms:[^\\s]+",
+    "ff_web_docker_image_pattern": "image:\\s*formsflow/forms-flow-web:[^\\s]+", 
+    "ff_api_docker_image_pattern": "image:\\s*formsflow/forms-flow-webapi:[^\\s]+",
+    "ff_bpm_docker_image_pattern": "image:\\s*formsflow/forms-flow-bpm:[^\\s]+",
+    "ff_analytics_docker_image_pattern": "image:\\s*formsflow/forms-flow-analytics:[^\\s]+",
+    "ff_version_pattern": "(?:version|VERSION)\\s*[=:]\\s*[\"']?[v]?\\d+\\.\\d+\\.\\d+[\"']?"
+  }
+}

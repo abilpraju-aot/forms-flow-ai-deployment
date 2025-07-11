@@ -1,0 +1,231 @@
+name: Version Bump Automation
+
+# This workflow can only be triggered manually via GitHub Actions UI
+# It will:
+# 1. Checkout the current branch
+# 2. Run version updates across the repository
+# 3. Create a new branch: version-bump/<version>
+# 4. Commit changes and create a PR back to the original branch
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  version-bump:
+    name: Version Bump and PR Creation
+    runs-on: ubuntu-latest
+    
+    # Add permissions for creating PRs and pushing to branches
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      # Step 1: Checkout the repository with full history
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history needed for git operations
+          token: ${{ secrets.GITHUB_TOKEN }}  # Explicit token for push operations
+          ref: ${{ github.ref_name }}  # Explicitly checkout the current branch
+
+      # Step 2: Validate VERSION file exists and get current version
+      - name: Validate VERSION file and get version
+        id: get_version
+        run: |
+          # Check if VERSION file exists
+          if [ ! -f "VERSION" ]; then
+            echo "❌ VERSION file not found. Please create a VERSION file in the repository root."
+            exit 1
+          fi
+          
+          # Read and validate version format
+          VERSION=$(cat VERSION | tr -d '[:space:]')
+          if [ -z "$VERSION" ]; then
+            echo "❌ VERSION file is empty. Please add a valid version."
+            exit 1
+          fi
+          
+          # Basic version format validation (allows v1.0.0, 1.0.0, v1.0.0-alpha, etc.)
+          if [[ ! "$VERSION" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?$ ]]; then
+            echo "⚠️  Warning: Version format '$VERSION' may not be standard semver"
+          fi
+          
+          echo "📋 Current version: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      # Step 3: Check if version-bump branch already exists
+      - name: Check if version-bump branch exists
+        id: check_branch
+        run: |
+          BRANCH="version-bump/${{ steps.get_version.outputs.version }}"
+          echo "🔍 Checking if branch '$BRANCH' already exists..."
+          
+          # Check remote branches
+          if git ls-remote --exit-code --heads origin "$BRANCH" > /dev/null 2>&1; then
+            echo "❌ Branch '$BRANCH' already exists on remote. Exiting."
+            echo "💡 Delete the existing branch or use a different version."
+            exit 1
+          fi
+          
+          # Check local branches
+          if git show-ref --verify --quiet "refs/heads/$BRANCH" 2>/dev/null; then
+            echo "❌ Branch '$BRANCH' already exists locally. Exiting."
+            echo "💡 Delete the existing branch or use a different version."
+            exit 1
+          fi
+          
+          echo "✅ Branch '$BRANCH' is available"
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+      # Step 4: Verify the version updater CLI
+      - name: Verify version updater CLI
+        run: |
+          echo "🔧 Verifying version updater CLI..."
+          
+          # Check if Linux AMD64 binary exists
+          if [ ! -f "./scripts/version-bump-cli/formsflow-version-updater-linux-amd64" ]; then
+            echo "❌ Linux AMD64 binary not found: scripts/version-bump-cli/formsflow-version-updater-linux-amd64"
+            echo "💡 Please ensure the binary is present in scripts/version-bump-cli/"
+            exit 1
+          fi
+          
+          # Test if binary is executable and works
+          if ! ./scripts/version-bump-cli/formsflow-version-updater-linux-amd64 --version > /dev/null 2>&1; then
+            echo "❌ Binary is not executable or incompatible with Linux runner"
+            echo "💡 Please ensure the binary is built for Linux AMD64"
+            exit 1
+          fi
+          
+          # Ensure executable permissions
+          chmod +x scripts/version-bump-cli/formsflow-version-updater-linux-amd64
+          echo "✅ CLI verification complete"
+
+      # Step 5: Create new branch first
+      - name: Create version-bump branch
+        run: |
+          echo "🌿 Creating new branch: ${{ steps.check_branch.outputs.branch }}"
+          echo "📍 Current branch before checkout: $(git branch --show-current)"
+          echo "📍 Current commit: $(git rev-parse HEAD)"
+          
+          git checkout -b "${{ steps.check_branch.outputs.branch }}"
+          
+          # Configure git for the action
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          echo "📍 Current branch after checkout: $(git branch --show-current)"
+          echo "✅ Branch created successfully"
+
+      # Step 6: Run the version update script on the new branch
+      - name: Run version update script
+        run: |
+          echo "🚀 Running version update across repository..."
+          echo "📍 Current branch: $(git branch --show-current)"
+          echo "📍 Current commit: $(git rev-parse HEAD)"
+          
+          echo "🔄 Applying version updates..."
+          ./scripts/version-bump-cli/formsflow-version-updater-linux-amd64 \
+            --config scripts/version-bump-cli/config-simple.json \
+            --version-file VERSION
+          
+          echo "📍 Current branch after updates: $(git branch --show-current)"
+          echo "✅ Version updates applied"
+
+      # Step 7: Check if any changes were actually made
+      - name: Check for changes
+        id: check_changes
+        run: |
+          # Check if any files were modified
+          if git diff --quiet; then
+            echo "ℹ️  No changes detected after version update"
+            echo "changes_made=false" >> $GITHUB_OUTPUT
+          else
+            echo "📝 Changes detected, will commit and create PR"
+            echo "changes_made=true" >> $GITHUB_OUTPUT
+            
+            # Show what files were changed
+            echo "📋 Modified files:"
+            git diff --name-only
+          fi
+
+      # Step 8: Commit changes to the version-bump branch
+      - name: Commit changes to version-bump branch
+        if: steps.check_changes.outputs.changes_made == 'true'
+        run: |
+          # Add all changes and commit
+          git add -A
+          git commit -m "chore: version bump to ${{ steps.get_version.outputs.version }}
+
+          - Updated version references across repository
+          - Applied version synchronization to all configured files
+          - Generated by GitHub Actions workflow"
+          
+          echo "📤 Pushing branch to remote..."
+          git push --set-upstream origin "${{ steps.check_branch.outputs.branch }}"
+          echo "✅ Changes committed and pushed to version-bump branch"
+
+      # Step 9: Verify branch state before creating PR
+      - name: Verify branch state
+        if: steps.check_changes.outputs.changes_made == 'true'
+        run: |
+          echo "🔍 Verifying branch state before creating PR..."
+          echo "📍 Current branch: $(git branch --show-current)"
+          echo "📍 Current commit: $(git rev-parse HEAD)"
+          echo "📍 Branch differences from develop:"
+          git log --oneline develop..HEAD
+          echo "📍 File differences from develop:"
+          git diff develop --name-only
+
+      # Step 10: Create Pull Request using GitHub CLI
+      - name: Create Pull Request
+        if: steps.check_changes.outputs.changes_made == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔗 Creating Pull Request from ${{ steps.check_branch.outputs.branch }} to ${{ github.ref_name }}"
+          
+          # Create PR using GitHub CLI
+          PR_URL=$(gh pr create \
+            --title "Version bump to ${{ steps.get_version.outputs.version }}" \
+            --body "## 🤖 Automated Version Bump
+
+          This PR was automatically generated by the version bump workflow.
+
+          ### 📋 Details
+          - **Source branch:** \`${{ steps.check_branch.outputs.branch }}\`
+          - **Target branch:** \`${{ github.ref_name }}\`
+          - **Version:** \`${{ steps.get_version.outputs.version }}\`
+
+          ### 🔄 Changes
+          - Updated version references across all configured files
+          - Applied version synchronization to maintain consistency
+          - Generated by GitHub Actions workflow
+
+          ### ✅ Checklist
+          - [ ] Review the changes
+          - [ ] Ensure version format is correct
+          - [ ] Test if needed
+          - [ ] Merge when ready
+
+          ---
+          *This PR was created automatically. Please review before merging.*" \
+            --head "${{ steps.check_branch.outputs.branch }}" \
+            --base "${{ github.ref_name }}")
+          
+          echo "✅ Pull Request created: $PR_URL"
+
+      # Step 11: Summary
+      - name: Workflow Summary
+        run: |
+          echo "📊 Workflow Summary"
+          echo "=================="
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Version: ${{ steps.get_version.outputs.version }}"
+          echo "Changes made: ${{ steps.check_changes.outputs.changes_made }}"
+          
+          if [ "${{ steps.check_changes.outputs.changes_made }}" == "true" ]; then
+            echo "New branch: ${{ steps.check_branch.outputs.branch }}"
+            echo "Status: ✅ Version bump completed successfully"
+          else
+            echo "Status: ℹ️  No changes needed"
+          fi
