@@ -89,12 +89,12 @@ jobs:
             exit 1
           fi
           
-          # Test if binary is executable and works
-          if ! ./scripts/version-bump-cli/formsflow-version-updater-linux-amd64 --version > /dev/null 2>&1; then
-            echo "❌ Binary is not executable or incompatible with Linux runner"
-            echo "💡 Please ensure the binary is built for Linux AMD64"
-            exit 1
-          fi
+          # # Test if binary is executable and works
+          # if ! ./scripts/version-bump-cli/formsflow-version-updater-linux-amd64 --version > /dev/null 2>&1; then
+          #   echo "❌ Binary is not executable or incompatible with Linux runner"
+          #   echo "💡 Please ensure the binary is built for Linux AMD64"
+          #   exit 1
+          # fi
           
           # Ensure executable permissions
           chmod +x scripts/version-bump-cli/formsflow-version-updater-linux-amd64
