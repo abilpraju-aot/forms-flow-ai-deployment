@@ -12,12 +12,6 @@
       "path": "docker-compose/docker-compose.yml",
       "updates": [
         {
-          "description": "Forms Flow Forms Docker image tag",
-          "find": "ff_docker_image_pattern",
-          "replace": "image: formsflow/forms-flow-forms:{{docker_tag}}",
-          "type": "regex"
-        },
-        {
           "description": "Forms Flow Web Docker image tag",
           "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-web:{{docker_tag}}",
@@ -67,12 +61,6 @@
       "path": "docker-compose/docker-compose-ee.yml",
       "updates": [
         {
-          "description": "Forms Flow Forms Docker image tag (EE)",
-          "find": "ff_docker_image_pattern",
-          "replace": "image: formsflow/forms-flow-forms:{{docker_tag}}",
-          "type": "regex"
-        },
-        {
           "description": "Forms Flow Web Docker image tag (EE)",
           "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-web-ee:{{docker_tag}}",
@@ -121,12 +109,6 @@
       "name": "Docker Compose - ARM64 Architecture",
       "path": "docker-compose/docker-compose-arm64.yml",
       "updates": [
-        {
-          "description": "Forms Flow Forms Docker image tag (ARM64)",
-          "find": "ff_docker_image_pattern",
-          "replace": "image: formsflow/forms-flow-forms:{{docker_tag}}",
-          "type": "regex"
-        },
         {
           "description": "Forms Flow Web Docker image tag (ARM64)",
           "find": "ff_docker_image_pattern",
