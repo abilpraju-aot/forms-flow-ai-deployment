@@ -19,43 +19,43 @@
         },
         {
           "description": "Forms Flow Web Docker image tag",
-          "find": "ff_web_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-web:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow API Docker image tag",
-          "find": "ff_api_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-webapi:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow BPM Docker image tag",
-          "find": "ff_bpm_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-bpm:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow Data Analysis API Docker image tag",
-          "find": "ff_data_analysis_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-data-analysis-api:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow Documents API Docker image tag",
-          "find": "ff_documents_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-documents-api:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow Data Layer Docker image tag",
-          "find": "ff_data_layer_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-data-layer:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Keycloak customization Docker image tag",
-          "find": "keycloak_custom_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/keycloak-customizations:{{docker_tag}}",
           "type": "regex"
         }
@@ -74,43 +74,43 @@
         },
         {
           "description": "Forms Flow Web Docker image tag (EE)",
-          "find": "ff_web_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-web-ee:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow API Docker image tag (EE)",
-          "find": "ff_api_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-webapi-ee:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow BPM Docker image tag (EE)",
-          "find": "ff_bpm_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-bpm-ee:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow Data Analysis API Docker image tag (EE)",
-          "find": "ff_data_analysis_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-data-analysis-api-ee:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow Documents API Docker image tag (EE)",
-          "find": "ff_documents_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-documents-api-ee:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow Data Layer Docker image tag (EE)",
-          "find": "ff_data_layer_docker_image_pattern",
-          "replace": "image: formsflow/forms-flow-data-layer-ee:{{docker_tag}}",
+          "find": "ff_docker_image_pattern",
+          "replace": "image: formsflow/forms-flow-data-layer:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Keycloak customization Docker image tag (EE)",
-          "find": "keycloak_custom_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/keycloak-customizations-ee:{{docker_tag}}",
           "type": "regex"
         }
@@ -129,43 +129,43 @@
         },
         {
           "description": "Forms Flow Web Docker image tag (ARM64)",
-          "find": "ff_web_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-web:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow API Docker image tag (ARM64)",
-          "find": "ff_api_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-webapi:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow BPM Docker image tag (ARM64)",
-          "find": "ff_bpm_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-bpm:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow Data Analysis API Docker image tag (ARM64)",
-          "find": "ff_data_analysis_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-data-analysis-api:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow Documents API Docker image tag (ARM64)",
-          "find": "ff_documents_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-documents-api:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Forms Flow Data Layer Docker image tag (ARM64)",
-          "find": "ff_data_layer_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/forms-flow-data-layer:{{docker_tag}}",
           "type": "regex"
         },
         {
           "description": "Keycloak customization Docker image tag (ARM64)",
-          "find": "keycloak_custom_docker_image_pattern",
+          "find": "ff_docker_image_pattern",
           "replace": "image: formsflow/keycloak-customizations:{{docker_tag}}",
           "type": "regex"
         }
@@ -180,19 +180,6 @@
           "description": "Microfrontend URLs in sample.env",
           "find": "ff_url_version_pattern",
           "replace": "{{url_version}}",
-          "type": "regex"
-        }
-      ]
-    },
-
-    {
-      "name": "README File",
-      "path": "README.md",
-      "updates": [
-        {
-          "description": "Version references in README",
-          "find": "ff_version_pattern",
-          "replace": "{{full_version}}",
           "type": "regex"
         }
       ]
