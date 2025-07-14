@@ -83,8 +83,8 @@ jobs:
           echo "🔧 Verifying version updater CLI..."
           
           # Check if Linux AMD64 binary exists
-          if [ ! -f "./scripts/version-bump-cli/formsflow-version-updater-linux-amd64" ]; then
-            echo "❌ Linux AMD64 binary not found: scripts/version-bump-cli/formsflow-version-updater-linux-amd64"
+          if [ ! -f "./scripts/version-bump-cli/formsflow-version-updater" ]; then
+            echo "❌ Linux AMD64 binary not found: scripts/version-bump-cli/formsflow-version-updater"
             echo "💡 Please ensure the binary is present in scripts/version-bump-cli/"
             exit 1
           fi
@@ -97,7 +97,7 @@ jobs:
           # fi
           
           # Ensure executable permissions
-          chmod +x scripts/version-bump-cli/formsflow-version-updater-linux-amd64
+          chmod +x scripts/version-bump-cli/formsflow-version-updater
           echo "✅ CLI verification complete"
 
       # Step 5: Create new branch first
@@ -124,7 +124,7 @@ jobs:
           echo "📍 Current commit: $(git rev-parse HEAD)"
           
           echo "🔄 Applying version updates..."
-          ./scripts/version-bump-cli/formsflow-version-updater-linux-amd64 \
+          ./scripts/version-bump-cli/formsflow-version-updater \
             --config scripts/version-bump-cli/config-simple.json \
             --version-file VERSION
           
